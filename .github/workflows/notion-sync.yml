@@ -1,0 +1,73 @@
+name: Sync Issues to Notion
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+
+env:
+  NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+  NOTION_DB_ID: abfb507718fd45c2a2214e11523fb62e
+  NOTION_VERSION: "2022-06-28"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Notion task (issue opened)
+        if: github.event.action == 'opened'
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          payload=$(jq -n \
+            --arg title "$ISSUE_TITLE" \
+            --arg url "$ISSUE_URL" \
+            --argjson num "$ISSUE_NUMBER" \
+            --arg db "$NOTION_DB_ID" \
+            '{
+              parent: {database_id: $db},
+              properties: {
+                "タスク名": {title: [{text: {content: $title}}]},
+                "ステータス": {select: {name: "📥 Backlog"}},
+                "Issue番号": {number: $num},
+                "GitHub URL": {url: $url}
+              }
+            }')
+          curl -sf -X POST "https://api.notion.com/v1/pages" \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: $NOTION_VERSION" \
+            -H "Content-Type: application/json" \
+            -d "$payload"
+
+      - name: Update Notion task (issue closed / reopened)
+        if: github.event.action == 'closed' || github.event.action == 'reopened'
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_ACTION: ${{ github.event.action }}
+        run: |
+          query=$(jq -n --argjson num "$ISSUE_NUMBER" \
+            '{filter: {property: "Issue番号", number: {equals: $num}}}')
+          page_id=$(curl -sf -X POST "https://api.notion.com/v1/databases/$NOTION_DB_ID/query" \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: $NOTION_VERSION" \
+            -H "Content-Type: application/json" \
+            -d "$query" | jq -r '.results[0].id // empty')
+
+          if [ -z "$page_id" ]; then
+            echo "No Notion task found for issue #$ISSUE_NUMBER — skipping."
+            exit 0
+          fi
+
+          if [ "$ISSUE_ACTION" = "closed" ]; then
+            props=$(jq -n --arg today "$(date +%F)" \
+              '{properties: {"ステータス": {select: {name: "✅ Done"}}, "完了日": {date: {start: $today}}}}')
+          else
+            props='{"properties": {"ステータス": {select: {name: "📥 Backlog"}}, "完了日": {date: null}}}'
+          fi
+
+          curl -sf -X PATCH "https://api.notion.com/v1/pages/$page_id" \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Notion-Version: $NOTION_VERSION" \
+            -H "Content-Type: application/json" \
+            -d "$props"
