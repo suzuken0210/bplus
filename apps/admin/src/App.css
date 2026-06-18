@@ -1,0 +1,78 @@
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  text-align: left;
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.lead {
+  color: #57606a;
+  margin: 0 0 1.5rem;
+}
+
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: 1px solid #1f6feb;
+  border-radius: 6px;
+  background: #1f6feb;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1a5fd0;
+}
+
+.status {
+  margin-top: 1rem;
+  color: #b3261e;
+}
+
+.add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.add-form input {
+  flex: 1;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #c9ccd1;
+  border-radius: 6px;
+}
+
+.add-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.event-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.event-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #eaecef;
+}
+
+.event-date {
+  color: #8a9099;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}

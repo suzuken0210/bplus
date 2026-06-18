@@ -1,0 +1,19 @@
+{
+  "name": "bplus",
+  "private": true,
+  "description": "社内イベント電子チケット＆管理アプリ（モノレポ）",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:admin": "yarn workspace @bplus/admin dev",
+    "dev:participant": "yarn workspace @bplus/participant dev",
+    "build": "yarn workspaces run build",
+    "typecheck": "yarn workspaces run typecheck"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}

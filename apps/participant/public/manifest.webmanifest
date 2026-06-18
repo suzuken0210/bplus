@@ -1,0 +1,19 @@
+{
+  "name": "bplus 電子チケット",
+  "short_name": "bplus",
+  "description": "社内イベントの電子チケットを表示・管理する",
+  "lang": "ja",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f6feb",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

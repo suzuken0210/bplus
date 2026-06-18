@@ -1,0 +1,43 @@
+# --- General ---
+.DS_Store
+Thumbs.db
+*.log
+
+# --- Env ---
+.env
+.env.*
+!.env.example
+
+# --- Node ---
+node_modules/
+.yarn/cache
+.yarn/install-state.gz
+.eslintcache
+coverage/
+dist/
+
+# --- IDE ---
+.idea/
+.vscode/
+.cursor/
+
+# --- Secrets / certs ---
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# --- Rails (api) ---
+api/log/*
+api/tmp/*
+!api/log/.keep
+!api/tmp/.keep
+api/storage/*
+!api/storage/.keep
+api/.bundle
+api/vendor/bundle
+
+# --- Docker ---
+docker-compose.override.yml

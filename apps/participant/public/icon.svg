@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="bplus">
+  <!-- maskable 対応: 全面を背景色で塗り、主要素は中央セーフゾーンに配置 -->
+  <rect width="512" height="512" fill="#1f6feb"/>
+  <!-- チケット -->
+  <g fill="#ffffff">
+    <path d="M150 176h212a16 16 0 0 1 16 16v40a32 32 0 0 0 0 64v40a16 16 0 0 1-16 16H150a16 16 0 0 1-16-16v-40a32 32 0 0 0 0-64v-40a16 16 0 0 1 16-16z" opacity="0.95"/>
+  </g>
+  <!-- ミシン目 -->
+  <g stroke="#1f6feb" stroke-width="8" stroke-linecap="round" stroke-dasharray="4 18">
+    <line x1="256" y1="184" x2="256" y2="328"/>
+  </g>
+  <!-- 文字 b+ -->
+  <text x="206" y="290" font-family="-apple-system, Segoe UI, Roboto, sans-serif" font-size="96" font-weight="700" fill="#1f6feb" text-anchor="middle">b</text>
+  <text x="312" y="284" font-family="-apple-system, Segoe UI, Roboto, sans-serif" font-size="72" font-weight="700" fill="#1f6feb" text-anchor="middle">+</text>
+</svg>
