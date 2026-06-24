@@ -12,7 +12,8 @@ function App() {
 
   async function loadEvents() {
     try {
-      setEvents(await api.events.list())
+      const list = await api.events.list()
+      setEvents(list)
       setStatus('')
     } catch (e) {
       setStatus(errorMessage(e))
@@ -20,8 +21,22 @@ function App() {
   }
 
   // 初回ロード時に最新のイベント一覧を取得する。
+  // アンマウント後の setState を防ぐため active フラグでガードする。
   useEffect(() => {
-    void loadEvents()
+    let active = true
+    void (async () => {
+      try {
+        const list = await api.events.list()
+        if (!active) return
+        setEvents(list)
+        setStatus('')
+      } catch (e) {
+        if (active) setStatus(errorMessage(e))
+      }
+    })()
+    return () => {
+      active = false
+    }
   }, [])
 
   async function handleSubmit(e: FormEvent) {
