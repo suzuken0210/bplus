@@ -1,0 +1,50 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # 起動条件:
+    #  - PR が opened されたとき（自動レビュー）
+    #  - PR コメントに @claude を含み、投稿者がメンバー/オーナー/コラボレーターのとき（対話モード）
+    # fork / dependabot からの PR は secrets 保護のため除外する。
+    if: |
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.fork == false &&
+       github.actor != 'dependabot[bot]') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@claude') &&
+       contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@c3d45e8e941e1b2ad7b278c57482d9c5bf1f35b3 # v1.0.99
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # pull_request(opened) では下記レビュープロンプトを自動実行。
+          # issue_comment では prompt を空にし、@claude へのコメント内容を文脈として応答させる。
+          prompt: ${{ github.event_name == 'pull_request' && 'このPRをレビューしてください。CLAUDE.md のプロジェクト規約に従い、変更差分（gh pr diff）を確認したうえで、バグ・セキュリティ・設計上の問題を中心に日本語で指摘してください。ファイルパスと行番号が特定できる指摘はインラインコメントで投稿してください。指摘は Critical / Major / Minor / Suggestion で分類してください。' || '' }}
+          claude_args: |
+            --model claude-sonnet-4-6
+            --allowedTools "Read,Glob,Grep,Bash(gh pr diff *),Bash(gh pr view *),mcp__github_inline_comment__create_inline_comment"
+            --disallowedTools "Edit,Write,MultiEdit,NotebookEdit"
