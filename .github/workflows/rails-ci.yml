@@ -1,0 +1,54 @@
+name: Rails CI
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/rails-ci.yml'
+      - 'api/**'
+
+defaults:
+  run:
+    working-directory: ./api
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          working-directory: ./api
+          bundler-cache: true
+
+      # bplus 同梱の CI 定義（api/config/ci.rb）を実行:
+      # rubocop / bundler-audit / brakeman / rails test / seed を一括チェックする。
+      - name: Run bin/ci
+        run: bin/ci
