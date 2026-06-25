@@ -1,0 +1,7 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/coverage/**", "**/*.gen.ts", "yarn.lock"],
+  "ignoreRegExpList": ["/[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff\\u3400-\\u4dbf]+/"],
+  "words": ["bplus", "vite", "tseslint", "corepack", "noopener", "noreferrer"]
+}

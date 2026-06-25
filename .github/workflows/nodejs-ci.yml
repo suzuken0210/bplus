@@ -32,6 +32,15 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Format check (Prettier)
+        run: yarn format:check
+
+      - name: CSS Lint (stylelint)
+        run: yarn lint:css
+
+      - name: Spellcheck (cspell)
+        run: yarn spellcheck
+
       - name: Build (all workspaces)
         run: yarn build
 
