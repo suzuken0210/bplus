@@ -1,0 +1,89 @@
+name: OpenAPI
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/openapi.yml'
+      - 'api/**'
+      - 'redocly.yaml'
+      - 'packages/types/src/openapi.gen.ts'
+      - 'package.json'
+      - 'yarn.lock'
+
+jobs:
+  openapi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          working-directory: ./api
+          bundler-cache: true
+
+      - name: Prepare test DB
+        working-directory: ./api
+        run: bin/rails db:test:prepare
+
+      # request spec から openapi.yaml を再生成し、コミット済みと一致するか検証する。
+      - name: Regenerate OpenAPI doc from request specs
+        working-directory: ./api
+        run: bundle exec rake rswag:specs:swaggerize
+
+      - name: Verify api/openapi.yaml is up to date
+        run: |
+          if ! git diff --exit-code api/openapi.yaml; then
+            echo "::error::api/openapi.yaml が最新ではありません。api/ で 'bundle exec rake rswag:specs:swaggerize' を実行してコミットしてください。"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'yarn'
+
+      - name: Enable yarn by corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # openapi.yaml から型を再生成し、コミット済みと一致するか検証する。
+      - name: Verify generated types are up to date
+        run: |
+          yarn gen
+          if ! git diff --exit-code packages/types/src/openapi.gen.ts; then
+            echo "::error::packages/types/src/openapi.gen.ts が最新ではありません。'yarn gen' を実行してコミットしてください。"
+            exit 1
+          fi
+
+      - name: Lint OpenAPI spec
+        run: yarn openapi:lint

@@ -1,0 +1,98 @@
+---
+openapi: 3.0.1
+info:
+  title: bplus API
+  version: 0.1.0
+  description: 社内イベント電子チケットアプリの API 仕様（request spec から自動生成）。
+servers:
+- url: "/"
+components:
+  schemas:
+    Event:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - event_name
+      - created_at
+      - updated_at
+      - discarded_at
+      properties:
+        id:
+          type: string
+          description: UUID
+        event_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        discarded_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: 論理削除日時。未削除なら null。
+    CreateEventRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - event
+      properties:
+        event:
+          type: object
+          additionalProperties: false
+          required:
+          - event_name
+          properties:
+            event_name:
+              type: string
+    ValidationError:
+      type: object
+      additionalProperties: false
+      required:
+      - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+paths:
+  "/api/v1/events":
+    get:
+      summary: イベント一覧（有効なもののみ・作成順）
+      tags:
+      - Events
+      responses:
+        '200':
+          description: イベントの配列
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Event"
+    post:
+      summary: イベントを1件作成
+      tags:
+      - Events
+      parameters: []
+      responses:
+        '201':
+          description: 作成されたイベント
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Event"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidationError"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateEventRequest"

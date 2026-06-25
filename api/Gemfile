@@ -36,6 +36,9 @@ group :development, :test do
   # BDD テストフレームワーク
   gem "rspec-rails"
 
+  # request spec から OpenAPI 仕様（openapi.yaml）を生成し、レスポンスを spec で検証する
+  gem "rswag-specs"
+
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
