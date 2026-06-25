@@ -42,3 +42,8 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
+
+group :test do
+  # OpenAPI 仕様（openapi.yaml）と実装レスポンスの整合を検証する（Rails 統合テスト用）
+  gem "committee-rails", require: false
+end

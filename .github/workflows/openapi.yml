@@ -1,0 +1,44 @@
+name: OpenAPI
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/openapi.yml'
+      - 'api/openapi.yaml'
+      - 'redocly.yaml'
+      - 'packages/types/src/openapi.gen.ts'
+      - 'package.json'
+      - 'yarn.lock'
+
+jobs:
+  openapi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'yarn'
+
+      - name: Enable yarn by corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint OpenAPI spec
+        run: yarn openapi:lint
+
+      - name: Verify generated types are up to date
+        run: |
+          yarn gen
+          if ! git diff --exit-code packages/types/src/openapi.gen.ts; then
+            echo "::error::packages/types/src/openapi.gen.ts が最新ではありません。'yarn gen' を実行してコミットしてください。"
+            exit 1
+          fi

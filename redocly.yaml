@@ -1,0 +1,10 @@
+# OpenAPI lint 設定。
+# minimal ルールセットを採用し、構造的な spec 検証は維持しつつ、
+# 小規模内部APIには過剰なポリシー系ルール（security-defined, info-license 等）は無効にする。
+extends:
+  - minimal
+rules:
+  # 重要な構造系は error のまま明示
+  operation-operationId: error
+  operation-operationId-unique: error
+  no-unused-components: error
