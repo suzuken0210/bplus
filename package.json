@@ -10,10 +10,20 @@
     "dev:admin": "yarn workspace @bplus/admin dev",
     "dev:participant": "yarn workspace @bplus/participant dev",
     "build": "yarn workspaces run build",
-    "typecheck": "yarn workspaces run typecheck"
+    "typecheck": "yarn workspaces run typecheck",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,json}\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,json}\"",
+    "lint:css": "stylelint \"apps/*/src/**/*.css\"",
+    "spellcheck": "cspell --no-progress \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\""
   },
   "engines": {
     "node": ">=22"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "cspell": "^10.0.1",
+    "prettier": "^3.8.4",
+    "stylelint": "^17.13.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
 }
