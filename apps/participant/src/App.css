@@ -64,13 +64,20 @@ button:disabled {
 .event-list li {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 1rem;
   padding: 0.9rem 1rem;
   margin-bottom: 0.5rem;
   border: 1px solid #eaecef;
   border-radius: 10px;
   background: #fff;
+}
+
+.event-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
 }
 
 .event-name {
@@ -81,4 +88,23 @@ button:disabled {
   color: #8a9099;
   font-size: 0.8rem;
   white-space: nowrap;
+}
+
+/* イベント行の参加/キャンセルボタン（全幅の既定 button を上書き） */
+.btn-join,
+.btn-cancel {
+  width: auto;
+  flex: none;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-cancel {
+  background: #fff;
+  color: #b3261e;
+  border-color: #b3261e;
+}
+
+.btn-cancel:hover {
+  background: #fdeceb;
 }
