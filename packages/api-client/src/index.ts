@@ -50,6 +50,12 @@ export function createApiClient(options: ApiClientOptions) {
     ping: () => request<{ status: string }>('/ping'),
     /** ログイン中ユーザー。 */
     me: () => request<User>('/me'),
+    /** モックログイン: name 一致で {id, name} を返す（不一致は ApiError 404）。 */
+    login: (name: string) =>
+      request<{ id: string; name: string }>('/login', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      }),
     events: {
       /** イベント一覧（作成順）。 */
       list: () => request<Event[]>('/events'),

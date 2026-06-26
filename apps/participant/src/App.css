@@ -31,6 +31,25 @@ button:hover {
   background: #1a5fd0;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-form input {
+  font: inherit;
+  padding: 0.75rem 1rem;
+  border: 1px solid #c9ccd1;
+  border-radius: 8px;
+}
+
 .status {
   margin-top: 1rem;
   color: #57606a;
