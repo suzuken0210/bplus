@@ -62,24 +62,47 @@ function LoginView({ onLogin }: { onLogin: (user: LoginUser) => void }) {
 
 function EventListView({ user }: { user: LoginUser }) {
   const [events, setEvents] = useState<Event[]>([])
+  const [joined, setJoined] = useState<Set<string>>(new Set())
+  const [pending, setPending] = useState<Set<string>>(new Set())
   const [status, setStatus] = useState('読み込み中…')
 
-  // 表示（リロード）時に DB の最新イベントを取得する。
+  // 表示（リロード）時に、イベント一覧と自分の参加状況を取得する。
   useEffect(() => {
-    api.events
-      .list()
-      .then((list) => {
+    Promise.all([api.events.list(), api.participations.listByUser(user.id)])
+      .then(([list, parts]) => {
         setEvents(list)
+        setJoined(new Set(parts.map((p) => p.event_id)))
         setStatus(list.length === 0 ? 'まだイベントはありません。' : '')
       })
-      .catch((e) => {
-        setStatus(
-          e instanceof ApiError
-            ? `API エラー: ${e.status}`
-            : '通信に失敗しました（API サーバーが起動しているか確認してください）',
-        )
+      .catch((e) => setStatus(errorMessage(e)))
+  }, [user.id])
+
+  async function toggle(eventId: string) {
+    if (pending.has(eventId)) return
+    const isJoined = joined.has(eventId)
+    setPending((s) => new Set(s).add(eventId))
+    try {
+      if (isJoined) {
+        await api.participations.cancel(eventId, user.id)
+      } else {
+        await api.participations.join(eventId, user.id)
+      }
+      setJoined((s) => {
+        const next = new Set(s)
+        if (isJoined) next.delete(eventId)
+        else next.add(eventId)
+        return next
       })
-  }, [])
+    } catch (e) {
+      setStatus(errorMessage(e))
+    } finally {
+      setPending((s) => {
+        const next = new Set(s)
+        next.delete(eventId)
+        return next
+      })
+    }
+  }
 
   return (
     <main className="container">
@@ -89,15 +112,34 @@ function EventListView({ user }: { user: LoginUser }) {
       {status && <p className="status">{status}</p>}
 
       <ul className="event-list">
-        {events.map((ev) => (
-          <li key={ev.id}>
-            <span className="event-name">{ev.event_name}</span>
-            <span className="event-date">{formatDate(ev.created_at)}</span>
-          </li>
-        ))}
+        {events.map((ev) => {
+          const isJoined = joined.has(ev.id)
+          return (
+            <li key={ev.id}>
+              <span className="event-main">
+                <span className="event-name">{ev.event_name}</span>
+                <span className="event-date">{formatDate(ev.created_at)}</span>
+              </span>
+              <button
+                type="button"
+                className={isJoined ? 'btn-cancel' : 'btn-join'}
+                disabled={pending.has(ev.id)}
+                onClick={() => toggle(ev.id)}
+              >
+                {isJoined ? 'キャンセル' : '参加'}
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </main>
   )
+}
+
+function errorMessage(e: unknown): string {
+  return e instanceof ApiError
+    ? `API エラー: ${e.status}`
+    : '通信に失敗しました（API サーバーが起動しているか確認してください）'
 }
 
 function formatDate(iso: string): string {

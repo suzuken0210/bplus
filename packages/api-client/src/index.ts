@@ -69,6 +69,23 @@ export function createApiClient(options: ApiClientOptions) {
     tickets: {
       listByUser: (userId: string) => request<Paginated<Ticket>>(`/users/${userId}/tickets`),
     },
+    participations: {
+      /** あるユーザーが参加中のイベント（event_id 一覧）。 */
+      listByUser: (userId: string) =>
+        request<{ event_id: string }[]>(`/users/${userId}/participations`),
+      /** イベントに参加する。 */
+      join: (eventId: string, userId: string) =>
+        request<{ event_id: string }>(`/events/${eventId}/participation`, {
+          method: 'POST',
+          body: JSON.stringify({ user_id: userId }),
+        }),
+      /** 参加を取り消す。 */
+      cancel: (eventId: string, userId: string) =>
+        request<void>(`/events/${eventId}/participation`, {
+          method: 'DELETE',
+          body: JSON.stringify({ user_id: userId }),
+        }),
+    },
   }
 }
 
