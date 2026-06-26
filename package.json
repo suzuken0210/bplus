@@ -14,16 +14,24 @@
     "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,json}\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,json}\"",
     "lint:css": "stylelint \"apps/*/src/**/*.css\"",
-    "spellcheck": "cspell --no-progress \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\""
+    "spellcheck": "cspell --no-progress \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\"",
+    "test": "vitest run"
   },
   "engines": {
     "node": ">=22"
   },
   "license": "UNLICENSED",
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.3",
     "cspell": "^10.0.1",
+    "jsdom": "^29.1.1",
     "prettier": "^3.8.4",
     "stylelint": "^17.13.0",
-    "stylelint-config-standard": "^40.0.0"
+    "stylelint-config-standard": "^40.0.0",
+    "vitest": "^4.1.9"
   }
 }
