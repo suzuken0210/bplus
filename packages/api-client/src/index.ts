@@ -2,7 +2,7 @@
 // Rails API（/api/v1 配下）への型付きアクセスを提供する。
 // Web/将来の RN から共通利用するため、fetch のみに依存する。
 
-import type { CreateEventInput, Event, Paginated, Ticket, User } from '@bplus/types'
+import type { CreateEventInput, Event, EventDetail, Paginated, Ticket, User } from '@bplus/types'
 
 export interface ApiClientOptions {
   /** API のベース URL（例: http://localhost:3000/api/v1）。 */
@@ -59,6 +59,8 @@ export function createApiClient(options: ApiClientOptions) {
     events: {
       /** イベント一覧（作成順）。 */
       list: () => request<Event[]>('/events'),
+      /** イベント1件（参加ユーザー一覧を含む）。 */
+      get: (id: string) => request<EventDetail>(`/events/${id}`),
       /** イベントを1件追加する。 */
       create: (input: CreateEventInput) =>
         request<Event>('/events', {
