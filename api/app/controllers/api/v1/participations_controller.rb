@@ -2,9 +2,9 @@ module Api
   module V1
     class ParticipationsController < ApplicationController
       # GET /api/v1/users/:user_id/participations
-      # そのユーザーが参加中（有効）のイベント参加を返す。
+      # そのユーザーが参加中（有効）のイベント参加を返す。イベント自体が論理削除済みのものは除く。
       def index
-        participations = UserJoinEvent.kept.where(user_id: params[:user_id])
+        participations = UserJoinEvent.kept.where(user_id: params[:user_id]).joins(:event).merge(Event.kept)
         render json: participations.map { |p| { event_id: p.event_id } }
       end
 
@@ -13,6 +13,11 @@ module Api
       def create
         user_id = params[:user_id]
         event_id = params[:event_id]
+
+        # 有効なイベントのみ参加可能（events#show と挙動を揃える）。
+        unless Event.kept.exists?(id: event_id)
+          return render json: { error: "イベントが見つかりません" }, status: :not_found
+        end
 
         active = UserJoinEvent.kept.find_by(user_id: user_id, event_id: event_id)
         return render json: { event_id: active.event_id }, status: :ok if active
