@@ -5,7 +5,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
   subject(:events_show) { get "/api/v1/events/#{event_id}" }
 
   let!(:event) { Event.create!(event_name: "懇親会") }
-  let(:event_id) { event.id }
+  let!(:event_id) { event.id }
 
   context "参加者がいる場合" do
     let!(:older_user) { User.create!(name: "先に登録したユーザー", created_at: 2.days.ago) }
@@ -72,7 +72,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
   end
 
   context "イベントが存在しない場合" do
-    let(:event_id) { SecureRandom.uuid }
+    let!(:event_id) { SecureRandom.uuid }
 
     it "404 を返す", :aggregate_failures do
       events_show

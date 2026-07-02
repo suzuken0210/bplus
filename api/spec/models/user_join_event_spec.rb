@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe UserJoinEvent, type: :model do
-  let(:user) { User.create!(name: "山田太郎") }
-  let(:event) { Event.create!(event_name: "懇親会") }
+  let!(:user) { User.create!(name: "山田太郎") }
+  let!(:event) { Event.create!(event_name: "懇親会") }
 
   describe "バリデーション" do
     it "user と event があれば有効" do

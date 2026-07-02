@@ -25,13 +25,13 @@ RSpec.describe "Events API", type: :request do
 
       response 201, "作成されたイベント" do
         schema "$ref" => "#/components/schemas/Event"
-        let(:event) { { event: { event_name: "歓迎会" } } }
+        let!(:event) { { event: { event_name: "歓迎会" } } }
         run_test!
       end
 
       response 422, "バリデーションエラー" do
         schema "$ref" => "#/components/schemas/ValidationError"
-        let(:event) { { event: { event_name: "" } } }
+        let!(:event) { { event: { event_name: "" } } }
         run_test!
       end
     end

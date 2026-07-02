@@ -7,7 +7,7 @@ RSpec.describe "Api::V1::SessionsController POST /api/v1/login", type: :request 
   let!(:user) { User.create!(name: "山田太郎") }
 
   context "name が一致する有効なユーザーがいる場合" do
-    let(:name) { "山田太郎" }
+    let!(:name) { "山田太郎" }
 
     it "200 とユーザー情報を返す", :aggregate_failures do
       login
@@ -18,7 +18,7 @@ RSpec.describe "Api::V1::SessionsController POST /api/v1/login", type: :request 
   end
 
   context "name が一致するユーザーが論理削除済みの場合" do
-    let(:name) { "削除済みユーザー" }
+    let!(:name) { "削除済みユーザー" }
 
     before { User.create!(name: "削除済みユーザー", discarded_at: Time.current) }
 
@@ -31,7 +31,7 @@ RSpec.describe "Api::V1::SessionsController POST /api/v1/login", type: :request 
   end
 
   context "name が一致するユーザーがいない場合" do
-    let(:name) { "存在しないユーザー" }
+    let!(:name) { "存在しないユーザー" }
 
     it "404 を返す", :aggregate_failures do
       login

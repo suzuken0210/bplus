@@ -5,7 +5,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
   subject(:events_create) { post "/api/v1/events", params: params, as: :json }
 
   context "有効なパラメータの場合" do
-    let(:params) { { event: { event_name: "歓迎会" } } }
+    let!(:params) { { event: { event_name: "歓迎会" } } }
 
     it "イベントが1件作成される" do
       expect { events_create }.to change(Event, :count).by(1)
@@ -23,7 +23,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
   end
 
   context "event_name が空の場合" do
-    let(:params) { { event: { event_name: "" } } }
+    let!(:params) { { event: { event_name: "" } } }
 
     it "イベントは作成されない" do
       expect { events_create }.not_to change(Event, :count)
@@ -38,7 +38,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
   end
 
   context "event パラメータが無い場合" do
-    let(:params) { {} }
+    let!(:params) { {} }
 
     it "400 を返す" do
       events_create
