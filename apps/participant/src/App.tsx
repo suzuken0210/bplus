@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom'
-import type { Event } from '@bplus/types'
+import type { Event, EventDetail } from '@bplus/types'
 import { ApiError } from '@bplus/api-client'
 import { api } from './api'
 import './App.css'
@@ -148,8 +148,26 @@ function EventListView({ user }: { user: LoginUser }) {
 }
 
 function EventDetailView() {
-  // 現状は中身なし。イベント ID の取得のみ行い、内容は今後実装する。
   const { eventId } = useParams()
+  const [event, setEvent] = useState<EventDetail | null>(null)
+  const [status, setStatus] = useState('読み込み中…')
+
+  // 表示（リロード）時にイベント詳細と参加者を取得する＝常に最新状況。
+  useEffect(() => {
+    if (!eventId) return
+    api.events
+      .get(eventId)
+      .then((detail) => {
+        setEvent(detail)
+        setStatus('')
+      })
+      .catch((e) => {
+        setEvent(null)
+        setStatus(
+          e instanceof ApiError && e.status === 404 ? 'イベントが見つかりません' : errorMessage(e),
+        )
+      })
+  }, [eventId])
 
   return (
     <main className="container">
@@ -158,9 +176,25 @@ function EventDetailView() {
           ← イベント一覧に戻る
         </Link>
       </p>
-      <h1>イベント詳細</h1>
-      <p className="lead">（このページの内容は今後実装します）</p>
-      <p className="status">event id: {eventId}</p>
+
+      <h1>{event ? event.event_name : 'イベント詳細'}</h1>
+
+      {status && <p className="status">{status}</p>}
+
+      {event && (
+        <>
+          <h2>参加者（{event.participants.length}人）</h2>
+          {event.participants.length === 0 ? (
+            <p className="status">まだ参加者はいません。</p>
+          ) : (
+            <ul className="participant-list">
+              {event.participants.map((p) => (
+                <li key={p.id}>{p.name}</li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
     </main>
   )
 }

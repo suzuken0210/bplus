@@ -32,6 +32,17 @@ export interface CreateEventInput {
   event_name: string
 }
 
+/** イベント参加者（詳細表示用の最小情報）。 */
+export interface EventParticipant {
+  id: string
+  name: string
+}
+
+/** イベント詳細（1件取得時。参加ユーザー一覧を含む）。 */
+export interface EventDetail extends Event {
+  participants: EventParticipant[]
+}
+
 /** 電子チケットの状態。 */
 export type TicketStatus = 'issued' | 'used' | 'revoked'
 

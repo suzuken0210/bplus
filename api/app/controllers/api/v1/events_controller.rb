@@ -8,6 +8,22 @@ module Api
         render json: events.map { |event| serialize(event) }
       end
 
+      # GET /api/v1/events/:id
+      # イベント1件と、そのイベントに参加中（有効）のユーザー一覧を返す。
+      def show
+        event = Event.kept.find_by(id: params[:id])
+        return render json: { error: "イベントが見つかりません" }, status: :not_found unless event
+
+        participants = User.kept
+          .joins(:user_join_events)
+          .where(user_join_events: { event_id: event.id, discarded_at: nil })
+          .order("users.created_at ASC")
+
+        render json: serialize(event).merge(
+          participants: participants.map { |user| { id: user.id, name: user.name } }
+        )
+      end
+
       # POST /api/v1/events
       # event_name を受け取りイベントを1件追加する。
       def create
