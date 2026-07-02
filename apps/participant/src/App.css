@@ -78,10 +78,27 @@ button:disabled {
   flex-direction: column;
   gap: 0.15rem;
   min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back-link {
+  color: #1f6feb;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  text-decoration: underline;
 }
 
 .event-name {
   font-weight: 600;
+}
+
+.event-main:hover .event-name {
+  text-decoration: underline;
 }
 
 .event-date {
