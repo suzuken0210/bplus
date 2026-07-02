@@ -1,6 +1,8 @@
 require "rails_helper"
 
 # POST /api/v1/events の振る舞いテスト。
+# OpenAPI 契約（スキーマ）の検証は spec/requests/api/v1/events_spec.rb（rswag）が担う。
+# レスポンス形状を変更する際は rswag 側と openapi.yaml も併せて更新すること。
 RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request do
   subject(:events_create) { post "/api/v1/events", params: params, as: :json }
 
@@ -14,7 +16,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
     it "201 と作成したイベントを返す", :aggregate_failures do
       events_create
 
-      created_event = Event.last
+      created_event = Event.order(:created_at).last
       expected_body = {
         "id" => created_event.id,
         "event_name" => "歓迎会",

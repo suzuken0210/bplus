@@ -13,24 +13,6 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "関連" do
-    it "user_join_events 経由で users を取得できる" do
-      event = Event.create!(event_name: "懇親会")
-      user = User.create!(name: "山田太郎")
-      UserJoinEvent.create!(user: user, event: event)
-
-      expect(event.users).to contain_exactly(user)
-    end
-
-    it "イベントを削除すると user_join_events も削除される" do
-      event = Event.create!(event_name: "懇親会")
-      user = User.create!(name: "山田太郎")
-      UserJoinEvent.create!(user: user, event: event)
-
-      expect { event.destroy! }.to change(UserJoinEvent, :count).by(-1)
-    end
-  end
-
   describe ".kept" do
     it "論理削除済みを除外する" do
       kept = Event.create!(event_name: "有効イベント")

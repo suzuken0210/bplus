@@ -4,10 +4,10 @@ require "rails_helper"
 RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :request do
   subject(:events_show) { get "/api/v1/events/#{event_id}" }
 
-  let!(:event) { Event.create!(event_name: "懇親会") }
   let!(:event_id) { event.id }
 
   context "参加者がいる場合" do
+    let!(:event) { Event.create!(event_name: "懇親会") }
     let!(:older_user) { User.create!(name: "先に登録したユーザー", created_at: 2.days.ago) }
     let!(:newer_user) { User.create!(name: "後に登録したユーザー", created_at: 1.day.ago) }
 
@@ -39,6 +39,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
   end
 
   context "参加を取り消したユーザー・論理削除済みユーザーがいる場合" do
+    let!(:event) { Event.create!(event_name: "懇親会") }
     let!(:active_user) { User.create!(name: "参加中ユーザー") }
     let!(:cancelled_user) { User.create!(name: "取り消し済みユーザー") }
     let!(:discarded_user) { User.create!(name: "削除済みユーザー", discarded_at: Time.current) }
@@ -71,6 +72,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
   end
 
   context "参加者がいない場合" do
+    let!(:event) { Event.create!(event_name: "懇親会") }
     let!(:expected_body) do
       {
         "id" => event.id,
