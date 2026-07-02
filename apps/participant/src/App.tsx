@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom'
 import type { Event } from '@bplus/types'
 import { ApiError } from '@bplus/api-client'
 import { api } from './api'
@@ -12,7 +13,16 @@ function App() {
   const [user, setUser] = useState<LoginUser | null>(null)
 
   if (!user) return <LoginView onLogin={setUser} />
-  return <EventListView user={user} />
+
+  // ログイン後はルーティングで一覧 / 詳細を切り替える。
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EventListView user={user} />} />
+        <Route path="/events/:eventId" element={<EventDetailView />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 function LoginView({ onLogin }: { onLogin: (user: LoginUser) => void }) {
@@ -116,10 +126,11 @@ function EventListView({ user }: { user: LoginUser }) {
           const isJoined = joined.has(ev.id)
           return (
             <li key={ev.id}>
-              <span className="event-main">
+              {/* イベント名を押下すると詳細ページへ遷移する。 */}
+              <Link className="event-main" to={`/events/${ev.id}`}>
                 <span className="event-name">{ev.event_name}</span>
                 <span className="event-date">{formatDate(ev.created_at)}</span>
-              </span>
+              </Link>
               <button
                 type="button"
                 className={isJoined ? 'btn-cancel' : 'btn-join'}
@@ -132,6 +143,24 @@ function EventListView({ user }: { user: LoginUser }) {
           )
         })}
       </ul>
+    </main>
+  )
+}
+
+function EventDetailView() {
+  // 現状は中身なし。イベント ID の取得のみ行い、内容は今後実装する。
+  const { eventId } = useParams()
+
+  return (
+    <main className="container">
+      <p>
+        <Link className="back-link" to="/">
+          ← イベント一覧に戻る
+        </Link>
+      </p>
+      <h1>イベント詳細</h1>
+      <p className="lead">（このページの内容は今後実装します）</p>
+      <p className="status">event id: {eventId}</p>
     </main>
   )
 }
