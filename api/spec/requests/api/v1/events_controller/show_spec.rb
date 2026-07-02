@@ -16,17 +16,25 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       UserJoinEvent.create!(user: older_user, event: event)
     end
 
+    let!(:expected_body) do
+      {
+        "id" => event.id,
+        "event_name" => "懇親会",
+        "created_at" => event.created_at.iso8601,
+        "updated_at" => event.updated_at.iso8601,
+        "discarded_at" => nil,
+        "participants" => [
+          { "id" => older_user.id, "name" => older_user.name },
+          { "id" => newer_user.id, "name" => newer_user.name }
+        ]
+      }
+    end
+
     it "イベントと参加者一覧（ユーザー作成順）を返す", :aggregate_failures do
       events_show
 
       expect(response).to have_http_status(:ok)
-      body = response.parsed_body
-      expect(body["id"]).to eq(event.id)
-      expect(body["event_name"]).to eq("懇親会")
-      expect(body["participants"]).to eq([
-        { "id" => older_user.id, "name" => older_user.name },
-        { "id" => newer_user.id, "name" => newer_user.name }
-      ])
+      expect(response.parsed_body).to eq(expected_body)
     end
   end
 
@@ -41,22 +49,44 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       UserJoinEvent.create!(user: discarded_user, event: event)
     end
 
+    let!(:expected_body) do
+      {
+        "id" => event.id,
+        "event_name" => "懇親会",
+        "created_at" => event.created_at.iso8601,
+        "updated_at" => event.updated_at.iso8601,
+        "discarded_at" => nil,
+        "participants" => [
+          { "id" => active_user.id, "name" => active_user.name }
+        ]
+      }
+    end
+
     it "有効な参加中ユーザーのみを participants に含める", :aggregate_failures do
       events_show
 
       expect(response).to have_http_status(:ok)
-      expect(response.parsed_body["participants"]).to eq([
-        { "id" => active_user.id, "name" => active_user.name }
-      ])
+      expect(response.parsed_body).to eq(expected_body)
     end
   end
 
   context "参加者がいない場合" do
+    let!(:expected_body) do
+      {
+        "id" => event.id,
+        "event_name" => "懇親会",
+        "created_at" => event.created_at.iso8601,
+        "updated_at" => event.updated_at.iso8601,
+        "discarded_at" => nil,
+        "participants" => []
+      }
+    end
+
     it "participants は空配列になる", :aggregate_failures do
       events_show
 
       expect(response).to have_http_status(:ok)
-      expect(response.parsed_body["participants"]).to eq([])
+      expect(response.parsed_body).to eq(expected_body)
     end
   end
 
@@ -67,7 +97,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       events_show
 
       expect(response).to have_http_status(:not_found)
-      expect(response.parsed_body["error"]).to eq("イベントが見つかりません")
+      expect(response.parsed_body).to eq({ "error" => "イベントが見つかりません" })
     end
   end
 
@@ -78,7 +108,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       events_show
 
       expect(response).to have_http_status(:not_found)
-      expect(response.parsed_body["error"]).to eq("イベントが見つかりません")
+      expect(response.parsed_body).to eq({ "error" => "イベントが見つかりません" })
     end
   end
 end

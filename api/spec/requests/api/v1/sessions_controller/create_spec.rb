@@ -26,7 +26,7 @@ RSpec.describe "Api::V1::SessionsController POST /api/v1/login", type: :request 
       login
 
       expect(response).to have_http_status(:not_found)
-      expect(response.parsed_body["error"]).to eq("該当するユーザーが見つかりません")
+      expect(response.parsed_body).to eq({ "error" => "該当するユーザーが見つかりません" })
     end
   end
 
@@ -37,17 +37,18 @@ RSpec.describe "Api::V1::SessionsController POST /api/v1/login", type: :request 
       login
 
       expect(response).to have_http_status(:not_found)
-      expect(response.parsed_body["error"]).to eq("該当するユーザーが見つかりません")
+      expect(response.parsed_body).to eq({ "error" => "該当するユーザーが見つかりません" })
     end
   end
 
   context "name が未指定の場合" do
     subject(:login) { post "/api/v1/login", params: {}, as: :json }
 
-    it "404 を返す" do
+    it "404 を返す", :aggregate_failures do
       login
 
       expect(response).to have_http_status(:not_found)
+      expect(response.parsed_body).to eq({ "error" => "該当するユーザーが見つかりません" })
     end
   end
 end

@@ -14,11 +14,16 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
     it "201 と作成したイベントを返す", :aggregate_failures do
       events_create
 
+      created_event = Event.last
+      expected_body = {
+        "id" => created_event.id,
+        "event_name" => "歓迎会",
+        "created_at" => created_event.created_at.iso8601,
+        "updated_at" => created_event.updated_at.iso8601,
+        "discarded_at" => nil
+      }
       expect(response).to have_http_status(:created)
-      body = response.parsed_body
-      expect(body["event_name"]).to eq("歓迎会")
-      expect(body["id"]).to eq(Event.last.id)
-      expect(body["discarded_at"]).to be_nil
+      expect(response.parsed_body).to eq(expected_body)
     end
   end
 
@@ -33,7 +38,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
       events_create
 
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.parsed_body["errors"]).to be_present
+      expect(response.parsed_body).to eq({ "errors" => [ "Event name can't be blank" ] })
     end
   end
 
