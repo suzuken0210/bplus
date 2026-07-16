@@ -8,8 +8,42 @@ RSpec.describe Event, type: :model do
       expect(event.errors).to be_of_kind(:event_name, :blank)
     end
 
+    it "event_name が nil でも無効" do
+      event = Event.new(event_name: nil)
+      expect(event).to be_invalid
+      expect(event.errors).to be_of_kind(:event_name, :blank)
+    end
+
     it "event_name があれば有効" do
       expect(Event.new(event_name: "懇親会")).to be_valid
+    end
+
+    it "held_at が無くても有効（開催日時未定のイベント）" do
+      expect(Event.new(event_name: "懇親会", held_at: nil)).to be_valid
+    end
+
+    it "held_at があっても有効" do
+      expect(Event.new(event_name: "懇親会", held_at: Time.zone.parse("2026-08-01T19:00:00Z"))).to be_valid
+    end
+  end
+
+  describe "作成" do
+    it "held_at 付きで作成すると値が保持される" do
+      event = Event.create!(event_name: "懇親会", held_at: "2026-08-01T19:00:00Z")
+
+      expect(event.reload.held_at).to eq(Time.zone.parse("2026-08-01T19:00:00Z"))
+    end
+
+    it "held_at を指定しなければ nil で作成される" do
+      event = Event.create!(event_name: "懇親会")
+
+      expect(event.reload.held_at).to be_nil
+    end
+
+    it "日時として解釈できない held_at は nil として扱われる" do
+      event = Event.create!(event_name: "懇親会", held_at: "invalid")
+
+      expect(event.reload.held_at).to be_nil
     end
   end
 
