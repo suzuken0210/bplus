@@ -83,6 +83,30 @@ h2 {
   cursor: not-allowed;
 }
 
+.event-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.event-meta dt {
+  color: #57606a;
+}
+
+.event-meta dd {
+  margin: 0;
+}
+
+.participant-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.participant-list li {
+  padding: 0.2rem 0;
+}
+
 .event-list {
   margin: 0;
   padding-left: 1.5rem;
