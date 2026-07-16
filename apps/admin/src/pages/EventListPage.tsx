@@ -1,23 +1,12 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { Event } from '@bplus/types'
 import { api } from '../api'
 import { errorMessage, formatDate } from '../utils'
 
 export function EventListPage() {
   const [events, setEvents] = useState<Event[]>([])
-  const [name, setName] = useState('')
   const [status, setStatus] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-
-  async function loadEvents() {
-    try {
-      const list = await api.events.list()
-      setEvents(list)
-      setStatus('')
-    } catch (e) {
-      setStatus(errorMessage(e))
-    }
-  }
 
   // 初回ロード時に最新のイベント一覧を取得する。
   // アンマウント後の setState を防ぐため active フラグでガードする。
@@ -38,38 +27,15 @@ export function EventListPage() {
     }
   }, [])
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    const event_name = name.trim()
-    if (!event_name || submitting) return
-    setSubmitting(true)
-    try {
-      await api.events.create({ event_name })
-      setName('')
-      await loadEvents() // 追加後に一覧を更新
-    } catch (err) {
-      setStatus(errorMessage(err))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
   return (
     <>
       <p className="lead">イベントを追加すると、参加者ページに表示されます。</p>
 
-      <form className="add-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="イベント名を入力"
-          aria-label="イベント名"
-        />
-        <button type="submit" disabled={submitting || name.trim() === ''}>
-          {submitting ? '追加中…' : '追加'}
-        </button>
-      </form>
+      <p>
+        <Link className="button-link" to="/events/new">
+          イベントを作成する
+        </Link>
+      </p>
 
       {status && <p className="status">{status}</p>}
 

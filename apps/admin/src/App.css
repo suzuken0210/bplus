@@ -34,7 +34,26 @@ button:hover {
   color: #b3261e;
 }
 
-/* stylelint の no-descending-specificity を守るため .add-form より前に置く。 */
+/* Link をボタン風に見せる（作成ページへの導線）。 */
+.button-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid #1f6feb;
+  border-radius: 6px;
+  background: #1f6feb;
+  color: #fff;
+  text-decoration: none;
+}
+
+.button-link:hover {
+  background: #1a5fd0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
 .create-form {
   display: flex;
   flex-direction: column;
@@ -62,30 +81,6 @@ button:hover {
 .create-form button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.add-form {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.add-form input {
-  flex: 1;
-  font: inherit;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #c9ccd1;
-  border-radius: 6px;
-}
-
-.add-form button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-h2 {
-  font-size: 1.1rem;
-  margin: 1.5rem 0 0.5rem;
 }
 
 .event-list {
