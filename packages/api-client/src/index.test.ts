@@ -36,7 +36,9 @@ describe('createApiClient', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('http://api.test/api/v1/events/event-1')
     const init = fetchMock.mock.calls[0][1] as RequestInit
     expect(init.method).toBe('PATCH')
-    expect(init.body).toBe(JSON.stringify({ event: { event_name: '歓迎会（更新）', held_at: null } }))
+    expect(init.body).toBe(
+      JSON.stringify({ event: { event_name: '歓迎会（更新）', held_at: null } }),
+    )
   })
 
   it('非 2xx は ApiError を throw する', async () => {
