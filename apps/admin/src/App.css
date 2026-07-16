@@ -83,30 +83,6 @@ h2 {
   cursor: not-allowed;
 }
 
-.add-form {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.add-form input {
-  flex: 1;
-  font: inherit;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #c9ccd1;
-  border-radius: 6px;
-}
-
-.add-form button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-h2 {
-  font-size: 1.1rem;
-  margin: 1.5rem 0 0.5rem;
-}
-
 .event-list {
   margin: 0;
   padding-left: 1.5rem;
