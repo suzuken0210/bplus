@@ -15,6 +15,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events", type: :request do
         {
           "id" => older_event.id,
           "event_name" => "歓迎会",
+          "held_at" => nil,
           "created_at" => older_event.created_at.iso8601,
           "updated_at" => older_event.updated_at.iso8601,
           "discarded_at" => nil
@@ -22,6 +23,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events", type: :request do
         {
           "id" => newer_event.id,
           "event_name" => "忘年会",
+          "held_at" => nil,
           "created_at" => newer_event.created_at.iso8601,
           "updated_at" => newer_event.updated_at.iso8601,
           "discarded_at" => nil

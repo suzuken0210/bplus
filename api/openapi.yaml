@@ -14,6 +14,7 @@ components:
       required:
       - id
       - event_name
+      - held_at
       - created_at
       - updated_at
       - discarded_at
@@ -23,6 +24,11 @@ components:
           description: UUID
         event_name:
           type: string
+        held_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: 開催日時。未定なら null。
         created_at:
           type: string
           format: date-time
@@ -48,6 +54,11 @@ components:
           properties:
             event_name:
               type: string
+            held_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: 開催日時（任意）。
     ValidationError:
       type: object
       additionalProperties: false

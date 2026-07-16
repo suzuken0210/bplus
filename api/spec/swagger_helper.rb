@@ -23,10 +23,11 @@ RSpec.configure do |config|
           Event: {
             type: :object,
             additionalProperties: false,
-            required: %w[id event_name created_at updated_at discarded_at],
+            required: %w[id event_name held_at created_at updated_at discarded_at],
             properties: {
               id: { type: :string, description: "UUID" },
               event_name: { type: :string },
+              held_at: { type: :string, format: "date-time", nullable: true, description: "開催日時。未定なら null。" },
               created_at: { type: :string, format: "date-time" },
               updated_at: { type: :string, format: "date-time" },
               discarded_at: { type: :string, format: "date-time", nullable: true, description: "論理削除日時。未削除なら null。" }
@@ -42,7 +43,8 @@ RSpec.configure do |config|
                 additionalProperties: false,
                 required: %w[event_name],
                 properties: {
-                  event_name: { type: :string }
+                  event_name: { type: :string },
+                  held_at: { type: :string, format: "date-time", nullable: true, description: "開催日時（任意）。" }
                 }
               }
             }

@@ -19,6 +19,8 @@ export interface Event {
   id: string
   /** イベント名。 */
   event_name: string
+  /** 開催日時（ISO 8601）。未定なら null。 */
+  held_at: string | null
   /** 作成日時（ISO 8601）。 */
   created_at: string
   /** 更新日時（ISO 8601）。 */
@@ -30,6 +32,8 @@ export interface Event {
 /** イベント作成の入力。 */
 export interface CreateEventInput {
   event_name: string
+  /** 開催日時（ISO 8601、任意）。 */
+  held_at?: string | null
 }
 
 /** イベント参加者（詳細表示用の最小情報）。 */

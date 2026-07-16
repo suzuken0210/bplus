@@ -20,6 +20,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       {
         "id" => event.id,
         "event_name" => "懇親会",
+        "held_at" => nil,
         "created_at" => event.created_at.iso8601,
         "updated_at" => event.updated_at.iso8601,
         "discarded_at" => nil,
@@ -54,6 +55,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       {
         "id" => event.id,
         "event_name" => "懇親会",
+        "held_at" => nil,
         "created_at" => event.created_at.iso8601,
         "updated_at" => event.updated_at.iso8601,
         "discarded_at" => nil,
@@ -77,6 +79,7 @@ RSpec.describe "Api::V1::EventsController GET /api/v1/events/:id", type: :reques
       {
         "id" => event.id,
         "event_name" => "懇親会",
+        "held_at" => nil,
         "created_at" => event.created_at.iso8601,
         "updated_at" => event.updated_at.iso8601,
         "discarded_at" => nil,
