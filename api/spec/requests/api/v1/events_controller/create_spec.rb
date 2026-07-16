@@ -16,7 +16,8 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
     it "201 と作成したイベントを返す", :aggregate_failures do
       events_create
 
-      created_event = Event.order(:created_at).last
+      # 作成順ソートは同時刻レコードで不安定なため、レスポンスの id で作成レコードを特定する。
+      created_event = Event.find(response.parsed_body.fetch("id"))
       expected_body = {
         "id" => created_event.id,
         "event_name" => "歓迎会",
@@ -36,7 +37,7 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
     it "201 と held_at を含むイベントを返す", :aggregate_failures do
       events_create
 
-      created_event = Event.order(:created_at).last
+      created_event = Event.find(response.parsed_body.fetch("id"))
       expected_body = {
         "id" => created_event.id,
         "event_name" => "歓迎会",
@@ -48,6 +49,31 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
       expect(response).to have_http_status(:created)
       expect(response.parsed_body).to eq(expected_body)
       expect(created_event.held_at).to eq(Time.zone.parse("2026-08-01T19:00:00Z"))
+    end
+  end
+
+  context "held_at が日時として解釈できない場合" do
+    let!(:params) { { event: { event_name: "歓迎会", held_at: "invalid" } } }
+
+    it "201 を返し、held_at は nil として作成される", :aggregate_failures do
+      events_create
+
+      created_event = Event.find(response.parsed_body.fetch("id"))
+      expect(response).to have_http_status(:created)
+      expect(response.parsed_body.fetch("held_at")).to be_nil
+      expect(created_event.held_at).to be_nil
+    end
+  end
+
+  context "未許可のパラメータを含む場合" do
+    let!(:params) { { event: { event_name: "歓迎会", discarded_at: Time.current.iso8601 } } }
+
+    it "未許可のパラメータは無視して作成される", :aggregate_failures do
+      events_create
+
+      created_event = Event.find(response.parsed_body.fetch("id"))
+      expect(response).to have_http_status(:created)
+      expect(created_event.discarded_at).to be_nil
     end
   end
 
@@ -68,6 +94,16 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
 
   context "event パラメータが無い場合" do
     let!(:params) { {} }
+
+    it "400 を返す" do
+      events_create
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  context "event パラメータが空の場合" do
+    let!(:params) { { event: {} } }
 
     it "400 を返す" do
       events_create
