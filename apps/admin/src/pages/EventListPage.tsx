@@ -43,7 +43,9 @@ export function EventListPage() {
       <ol className="event-list">
         {events.map((ev) => (
           <li key={ev.id}>
-            <span className="event-name">{ev.event_name}</span>
+            <Link className="event-name" to={`/events/${ev.id}`}>
+              {ev.event_name}
+            </Link>
             <span className="event-date">{formatDate(ev.created_at)}</span>
           </li>
         ))}
