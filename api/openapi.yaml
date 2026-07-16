@@ -59,6 +59,31 @@ components:
               format: date-time
               nullable: true
               description: 開催日時（任意）。
+    UpdateEventRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - event
+      properties:
+        event:
+          type: object
+          additionalProperties: false
+          properties:
+            event_name:
+              type: string
+            held_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: 開催日時（任意）。
+    NotFoundError:
+      type: object
+      additionalProperties: false
+      required:
+      - error
+      properties:
+        error:
+          type: string
     ValidationError:
       type: object
       additionalProperties: false
@@ -107,3 +132,39 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/CreateEventRequest"
+  "/api/v1/events/{id}":
+    patch:
+      summary: イベントを1件更新
+      tags:
+      - Events
+      parameters:
+      - name: id
+        in: path
+        description: イベントID（UUID）
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 更新されたイベント
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Event"
+        '404':
+          description: イベントが見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/NotFoundError"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidationError"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateEventRequest"

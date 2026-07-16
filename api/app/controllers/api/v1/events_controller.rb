@@ -35,6 +35,19 @@ module Api
         end
       end
 
+      # PATCH /api/v1/events/:id
+      # イベントの event_name / held_at を更新する。
+      def update
+        event = Event.kept.find_by(id: params[:id])
+        return render json: { error: "イベントが見つかりません" }, status: :not_found unless event
+
+        if event.update(event_params)
+          render json: serialize(event)
+        else
+          render json: { errors: event.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def event_params

@@ -36,6 +36,13 @@ export interface CreateEventInput {
   held_at?: string | null
 }
 
+/** イベント更新の入力（部分更新可）。 */
+export interface UpdateEventInput {
+  event_name?: string
+  /** 開催日時（ISO 8601）。null で未定に戻せる。 */
+  held_at?: string | null
+}
+
 /** イベント参加者（詳細表示用の最小情報）。 */
 export interface EventParticipant {
   id: string

@@ -38,4 +38,35 @@ RSpec.describe "Events API", type: :request do
       end
     end
   end
+
+  path "/api/v1/events/{id}" do
+    patch "イベントを1件更新" do
+      tags "Events"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :id, in: :path, type: :string, description: "イベントID（UUID）"
+      parameter name: :event, in: :body, schema: { "$ref" => "#/components/schemas/UpdateEventRequest" }
+
+      response 200, "更新されたイベント" do
+        schema "$ref" => "#/components/schemas/Event"
+        let!(:id) { Event.create!(event_name: "歓迎会").id }
+        let!(:event) { { event: { event_name: "歓迎会（更新）", held_at: "2026-08-01T19:00:00Z" } } }
+        run_test!
+      end
+
+      response 404, "イベントが見つからない" do
+        schema "$ref" => "#/components/schemas/NotFoundError"
+        let!(:id) { SecureRandom.uuid }
+        let!(:event) { { event: { event_name: "歓迎会（更新）" } } }
+        run_test!
+      end
+
+      response 422, "バリデーションエラー" do
+        schema "$ref" => "#/components/schemas/ValidationError"
+        let!(:id) { Event.create!(event_name: "歓迎会").id }
+        let!(:event) { { event: { event_name: "" } } }
+        run_test!
+      end
+    end
+  end
 end
