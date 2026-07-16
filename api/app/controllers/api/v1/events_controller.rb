@@ -25,7 +25,7 @@ module Api
       end
 
       # POST /api/v1/events
-      # event_name を受け取りイベントを1件追加する。
+      # event_name（と任意の held_at）を受け取りイベントを1件追加する。
       def create
         event = Event.new(event_params)
         if event.save
@@ -38,13 +38,14 @@ module Api
       private
 
       def event_params
-        params.require(:event).permit(:event_name)
+        params.require(:event).permit(:event_name, :held_at)
       end
 
       def serialize(event)
         {
           id: event.id,
           event_name: event.event_name,
+          held_at: event.held_at&.iso8601,
           created_at: event.created_at.iso8601,
           updated_at: event.updated_at.iso8601,
           discarded_at: event.discarded_at&.iso8601

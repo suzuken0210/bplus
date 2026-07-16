@@ -81,6 +81,11 @@ export interface components {
             /** @description UUID */
             id: string;
             event_name: string;
+            /**
+             * Format: date-time
+             * @description 開催日時。未定なら null。
+             */
+            held_at: string | null;
             /** Format: date-time */
             created_at: string;
             /** Format: date-time */
@@ -94,6 +99,11 @@ export interface components {
         CreateEventRequest: {
             event: {
                 event_name: string;
+                /**
+                 * Format: date-time
+                 * @description 開催日時（任意）。
+                 */
+                held_at?: string | null;
             };
         };
         ValidationError: {

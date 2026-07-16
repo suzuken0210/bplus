@@ -27,7 +27,7 @@ RSpec.describe "Events API", type: :request do
 
       response 201, "作成されたイベント" do
         schema "$ref" => "#/components/schemas/Event"
-        let!(:event) { { event: { event_name: "歓迎会" } } }
+        let!(:event) { { event: { event_name: "歓迎会", held_at: "2026-08-01T19:00:00Z" } } }
         run_test!
       end
 

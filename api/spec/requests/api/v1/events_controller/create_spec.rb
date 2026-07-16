@@ -20,12 +20,34 @@ RSpec.describe "Api::V1::EventsController POST /api/v1/events", type: :request d
       expected_body = {
         "id" => created_event.id,
         "event_name" => "歓迎会",
+        "held_at" => nil,
         "created_at" => created_event.created_at.iso8601,
         "updated_at" => created_event.updated_at.iso8601,
         "discarded_at" => nil
       }
       expect(response).to have_http_status(:created)
       expect(response.parsed_body).to eq(expected_body)
+    end
+  end
+
+  context "held_at を指定した場合" do
+    let!(:params) { { event: { event_name: "歓迎会", held_at: "2026-08-01T19:00:00Z" } } }
+
+    it "201 と held_at を含むイベントを返す", :aggregate_failures do
+      events_create
+
+      created_event = Event.order(:created_at).last
+      expected_body = {
+        "id" => created_event.id,
+        "event_name" => "歓迎会",
+        "held_at" => "2026-08-01T19:00:00Z",
+        "created_at" => created_event.created_at.iso8601,
+        "updated_at" => created_event.updated_at.iso8601,
+        "discarded_at" => nil
+      }
+      expect(response).to have_http_status(:created)
+      expect(response.parsed_body).to eq(expected_body)
+      expect(created_event.held_at).to eq(Time.zone.parse("2026-08-01T19:00:00Z"))
     end
   end
 
