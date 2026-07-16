@@ -58,6 +58,35 @@ h2 {
   margin: 1.5rem 0 0.5rem;
 }
 
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.create-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.create-form input {
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #c9ccd1;
+  border-radius: 6px;
+}
+
+.create-form button {
+  align-self: flex-start;
+}
+
+.create-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .event-list {
   margin: 0;
   padding-left: 1.5rem;
