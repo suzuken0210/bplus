@@ -39,6 +39,12 @@ export function EventDetailPage() {
 
       {event && (
         <>
+          <p>
+            <Link className="button-link" to={`/events/${event.id}/edit`}>
+              編集する
+            </Link>
+          </p>
+
           <dl className="event-meta">
             <dt>開催日時</dt>
             <dd>{event.held_at ? formatDate(event.held_at) : '未定'}</dd>
