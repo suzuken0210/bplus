@@ -25,6 +25,22 @@ describe('createApiClient', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('http://api.test/api/v1/events')
   })
 
+  it('events.update が PATCH /events/:id を event ラップしたボディで呼ぶ', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({}))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const client = createApiClient({ baseUrl: 'http://api.test/api/v1' })
+    await client.events.update('event-1', { event_name: '歓迎会（更新）', held_at: null })
+
+    expect(fetchMock).toHaveBeenCalledOnce()
+    expect(fetchMock.mock.calls[0][0]).toBe('http://api.test/api/v1/events/event-1')
+    const init = fetchMock.mock.calls[0][1] as RequestInit
+    expect(init.method).toBe('PATCH')
+    expect(init.body).toBe(
+      JSON.stringify({ event: { event_name: '歓迎会（更新）', held_at: null } }),
+    )
+  })
+
   it('非 2xx は ApiError を throw する', async () => {
     const fetchMock = vi
       .fn()

@@ -49,6 +49,29 @@ RSpec.configure do |config|
               }
             }
           },
+          UpdateEventRequest: {
+            type: :object,
+            additionalProperties: false,
+            required: %w[event],
+            properties: {
+              event: {
+                type: :object,
+                additionalProperties: false,
+                properties: {
+                  event_name: { type: :string },
+                  held_at: { type: :string, format: "date-time", nullable: true, description: "開催日時（任意）。" }
+                }
+              }
+            }
+          },
+          NotFoundError: {
+            type: :object,
+            additionalProperties: false,
+            required: %w[error],
+            properties: {
+              error: { type: :string }
+            }
+          },
           ValidationError: {
             type: :object,
             additionalProperties: false,

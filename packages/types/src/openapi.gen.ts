@@ -73,6 +73,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** イベントを1件更新 */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description イベントID（UUID） */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateEventRequest"];
+                };
+            };
+            responses: {
+                /** @description 更新されたイベント */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Event"];
+                    };
+                };
+                /** @description イベントが見つからない */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotFoundError"];
+                    };
+                };
+                /** @description バリデーションエラー */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -105,6 +166,19 @@ export interface components {
                  */
                 held_at?: string | null;
             };
+        };
+        UpdateEventRequest: {
+            event: {
+                event_name?: string;
+                /**
+                 * Format: date-time
+                 * @description 開催日時（任意）。
+                 */
+                held_at?: string | null;
+            };
+        };
+        NotFoundError: {
+            error: string;
         };
         ValidationError: {
             errors: string[];
