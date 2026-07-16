@@ -34,6 +34,36 @@ button:hover {
   color: #b3261e;
 }
 
+/* stylelint の no-descending-specificity を守るため .add-form より前に置く。 */
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.create-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.create-form input {
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #c9ccd1;
+  border-radius: 6px;
+}
+
+.create-form button {
+  align-self: flex-start;
+}
+
+.create-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .add-form {
   display: flex;
   gap: 0.5rem;
